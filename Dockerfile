@@ -11,5 +11,7 @@ RUN NODE_ENV=develop npm i
 
 COPY . .
 
+EXPOSE 3333
+
 #--- Tell the image what to do when is starts
 CMD ["npm", "run", "start"]
