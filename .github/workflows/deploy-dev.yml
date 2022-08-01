@@ -35,8 +35,8 @@ jobs:
       - name: Get registry path
         id: registry
         run: |
-          echo "::set-output name=path::docker/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}"
-          echo "::set-output name=latest::docker/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest"
+          echo "::set-output name=path::${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}"
+          echo "::set-output name=latest::${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest"
 
       - name: Build and push
         uses: docker/build-push-action@v2
