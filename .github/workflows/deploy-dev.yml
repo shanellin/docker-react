@@ -1,0 +1,56 @@
+name: Deploy (dev)
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Deploy to AWS EBS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12.22"
+          cache: "npm"
+          cache-dependency-path: "./package-lock.json"
+
+      - name: Install dependency
+        working-directory: ./
+        run: npm i
+
+      - name: Build
+        working-directory: ./
+        run: npm run build
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip * -x "**node_modules**"
+
+      - name: Beanstalk Deploy for app
+        uses: einaregilsson/beanstalk-deploy@v3
+        with:
+          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
+          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
+          application_name: docker-react
+          environment_name: dockerreact-env
+          region: ap-northeast-3
+          version_label: "docker-react-${{ steps.date.outputs.date }}"
+          deployment_package: deploy.zip
+
+      - name: Deployed!
+        run: echo App deployed to EBS
