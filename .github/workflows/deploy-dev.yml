@@ -10,7 +10,6 @@ on:
 
 env:
   IMAGE_NAME: docker-react
-  REGISTRY: ghcr.io
   
 jobs:
   build:
@@ -51,8 +50,8 @@ jobs:
       - name: Get registry path
         id: registry
         run: |
-          echo "::set-output name=path::${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}"
-          echo "::set-output name=latest::${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest"
+          echo "::set-output name=path::docker/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}"
+          echo "::set-output name=latest::docker/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest"
 
       - name: Build and push
         uses: docker/build-push-action@v2
