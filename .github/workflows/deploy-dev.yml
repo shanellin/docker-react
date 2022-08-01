@@ -27,22 +27,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "12.22"
-          cache: "npm"
-          cache-dependency-path: "./package-lock.json"
-
-      - name: Install dependency
-        working-directory: ./
-        run: npm i
-
-      - name: Build
-        working-directory: ./
-        run: npm run build
-
+          
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
@@ -62,6 +47,21 @@ jobs:
           tags: |
             ${{ steps.registry.outputs.path }}
             ${{ steps.registry.outputs.latest }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12.22"
+          cache: "npm"
+          cache-dependency-path: "./package-lock.json"
+
+      - name: Install dependency
+        working-directory: ./
+        run: npm i
+
+      - name: Build
+        working-directory: ./
+        run: npm run build
 
       - name: Generate deployment package
         run: zip -r deploy.zip * -x "**node_modules**"
